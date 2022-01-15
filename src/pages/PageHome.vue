@@ -1,15 +1,16 @@
 <template>
   <q-page class="flex flex-center">
-    <img
+    <!-- <img
       alt="Quasar logo"
       src="~assets/quasar-logo-vertical.svg"
       style="width: 200px; height: 200px"
-    >
+    > -->
+    <h5>Home Page</h5>
   </q-page>
 </template>
 
 <script>
 export default {
-  name: 'PageIndex'
+  name: 'PageHome'
 }
 </script>
