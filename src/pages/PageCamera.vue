@@ -1,10 +1,11 @@
 <template>
   <q-page class="constrain-more q-pa-md">
     <div class="camera-frame q-pa-md">
-      <img
+      <video
+        ref="video"
         class="full-width"
-        src="https://picsum.photos/id/1025/600/400"
-        alt="">
+        autoplay
+      />
     </div>
     <div class="text-center q-pa-md">
       <q-btn
@@ -64,6 +65,18 @@ export default {
         date: Date.now()
       }
     }
+  },
+  methods: {
+    initCamera() {
+      navigator.mediaDevices.getUserMedia({
+        video: true
+      }).then(stream => {
+        this.$refs.video.srcObject = stream
+      })
+    }
+  },
+  mounted() {
+    this.initCamera()
   }
 }
 </script>
