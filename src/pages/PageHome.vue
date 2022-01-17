@@ -1,42 +1,66 @@
 <template>
   <q-page class="constrain q-pa-md">
-     <q-card
-       v-for="post in posts"
-       :key="post.id"
-       class="card-post q-mb-md"
-       flat
-       bordered>
-      <q-item>
-        <q-item-section avatar>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-          </q-avatar>
-        </q-item-section>
 
-        <q-item-section>
-          <q-item-label class="text-bold">Salvador__Rombe</q-item-label>
-          <q-item-label caption>
-            Maputo, Mozambique
-          </q-item-label>
-        </q-item-section>
-      </q-item>
+    <div class="row q-col-gutter-lg">
+      <div class="col-12 col-sm-8">
+        <q-card
+          v-for="post in posts"
+          :key="post.id"
+          class="card-post q-mb-md"
+          flat
+          bordered>
+          <q-item>
+            <q-item-section avatar>
+              <q-avatar>
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              </q-avatar>
+            </q-item-section>
 
-      <q-separator />
+            <q-item-section>
+              <q-item-label class="text-bold">Salvador__Rombe</q-item-label>
+              <q-item-label caption>
+                {{ post.location }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
 
-      <q-img
-        src="https://cdn.quasar.dev/img/parallax2.jpg"
-      />
+          <q-separator />
 
-      <q-card-section>
-        <div>Golden Gate Bridge</div>
-        <div class="text-caption text-grey">June 10 9:04AM</div>
-      </q-card-section>
+          <q-img
+            :src="post.imageUrl"
+          />
 
-    </q-card>
+          <q-card-section>
+            <div>{{ post.caption }}</div>
+            <div class="text-caption text-grey">{{ post.date | niceDate}}</div>
+          </q-card-section>
+
+        </q-card>
+      </div>
+      <div class="col-4 large-screen-only">
+          <q-item class="fixed">
+            <q-item-section avatar>
+              <q-avatar size="48px">
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label class="text-bold">salvador__rombe</q-item-label>
+              <q-item-label caption>
+                Salvador Rombe
+              </q-item-label>
+            </q-item-section>
+          </q-item>      
+      </div>
+    </div>
+
   </q-page>
 </template>
 
 <script>
+import { date } from 'quasar'
+
 export default {
   name: 'PageHome',
   data() {
@@ -71,6 +95,11 @@ export default {
           imageUrl: 'https://cdn.quasar.dev/img/parallax2.jpg'
         },
       ]
+    }
+  },
+  filters: {
+    niceDate(value) {
+      return date.formatDate(value, 'MMMM D h:mmA')
     }
   }
 }
