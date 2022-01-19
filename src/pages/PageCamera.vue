@@ -46,12 +46,14 @@
       <div class="row justify-center q-ma-md">
         <q-input
           v-model="post.location"
+          :loading="locationLoading"
           class="col col-sm-6"
           label="Location"
           dense 
         >
           <template v-slot:append>
             <q-btn
+              v-if="!locationLoading"
               @click="getLocation"
               round
               dense
@@ -164,6 +166,7 @@ export default {
 
     },
     getLocation() {
+      this.locationLoading = true
       navigator.geolocation.getCurrentPosition(position => {
         console.log('position: ', position)
         this.getCityAndCountry(position)
@@ -187,12 +190,14 @@ export default {
       if (result.data.country) {
         this.post.location += `, ${ result.data.country }` 
       }
+      this.locationLoading = false
     },
     locationError() {  
        this.$q.dialog({
         title: 'Error',
         message: 'Could not find your location'
       })
+      this.locationLoading = false
     }
   },
   mounted() {
