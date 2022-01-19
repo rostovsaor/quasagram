@@ -90,7 +90,8 @@ export default {
       },
       imageCaptured: false,
       imageUpload: [],
-      hasCameraSupport: true
+      hasCameraSupport: true,
+      locationLoading: false,
     }
   },
   methods: {
@@ -167,7 +168,7 @@ export default {
         console.log('position: ', position)
         this.getCityAndCountry(position)
       }, err => {
-        console.log('err: ', err)
+        // console.log('err: ', err)
         this.locationError()
       }, { timeout: 7000 })
     },
@@ -177,8 +178,8 @@ export default {
         // console.log('result: ', result)
         this.locationSuccess(result)
       }).catch(err => {
-        console.log('err: ', err)
-        // this.locationError()
+        // console.log('err: ', err)
+        this.locationError()
       })
     },
     locationSuccess(result) {
@@ -186,6 +187,12 @@ export default {
       if (result.data.country) {
         this.post.location += `, ${ result.data.country }` 
       }
+    },
+    locationError() {  
+       this.$q.dialog({
+        title: 'Error',
+        message: 'Could not find your location'
+      })
     }
   },
   mounted() {
