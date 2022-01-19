@@ -52,6 +52,7 @@
         >
           <template v-slot:append>
             <q-btn
+              @click="getLocation"
               round
               dense
               flat
@@ -160,6 +161,31 @@ export default {
       var blob = new Blob([ab], {type: mimeString});
       return blob;
 
+    },
+    getLocation() {
+      navigator.geolocation.getCurrentPosition(position => {
+        console.log('position: ', position)
+        this.getCityAndCountry(position)
+      }, err => {
+        console.log('err: ', err)
+        this.locationError()
+      }, { timeout: 7000 })
+    },
+    getCityAndCountry(position) {
+      let apiUrl = `https://geocode.xyz/${ position.coords.latitude },${ position.coords.longitude }?json=1&auth=44782276697099834806x25145`
+      this.$axios.get(apiUrl).then(result => {
+        // console.log('result: ', result)
+        this.locationSuccess(result)
+      }).catch(err => {
+        console.log('err: ', err)
+        // this.locationError()
+      })
+    },
+    locationSuccess(result) {
+      this.post.location = result.data.city
+      if (result.data.country) {
+        this.post.location += `, ${ result.data.country }` 
+      }
     }
   },
   mounted() {
