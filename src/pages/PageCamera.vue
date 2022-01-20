@@ -227,6 +227,10 @@ export default {
         })
       }).catch(err => {
         console.log('err :', err)
+        this.$q.dialog({
+          title: 'Error',
+          message: 'Could not create post'
+        })
       })
     }
   },
