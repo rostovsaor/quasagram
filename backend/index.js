@@ -3,10 +3,15 @@
 */
 
   const express = require('express')
-  const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
-  const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+  const { initializeApp, applicationDefault, cert } = require('firebase-admin/app')
+  const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore')
+  const { getStorage } = require('firebase-admin/storage')
   let inspect = require('util').inspect
   let busboy = require('busboy');
+  let path = require('path')
+  let os = require('os')
+  let fs = require('fs')
+  let UUID = require('uuid-v4')
     
 /*
   config - express
@@ -21,10 +26,15 @@
   const serviceAccount = require('./serviceAccountKey.json');
     
   initializeApp({
-    credential: cert(serviceAccount)
+    credential: cert(serviceAccount),
+    storageBucket: 'quasagram-46530.appspot.com'
   });
 
+  
   const db = getFirestore();
+  const bucket = getStorage().bucket();
+
+
 
 /*
   endpoint - posts
@@ -50,9 +60,12 @@
   app.post('/createPost', (request, response) => {
     response.set('Access-Control-Allow-Origin', '*')
 
+    let uuid = UUID()
+
     const bb = busboy({ headers: request.headers });
 
     let fields = {}
+    let fileData = {}
 
     bb.on('file', (name, file, info) => {
       const { filename, encoding, mimeType } = info;
@@ -62,11 +75,14 @@
         encoding,
         mimeType
       );
-      file.on('data', (data) => {
-        console.log(`File [${name}] got ${data.length} bytes`);
-      }).on('close', () => {
-        console.log(`File [${name}] done`);
-      });
+      let filepath = path.join(os.tmpdir(), filename)
+      file.pipe(fs.createWriteStream(filepath))
+      fileData = { filepath, mimeType }
+      // file.on('data', (data) => {
+      //   console.log(`File [${name}] got ${data.length} bytes`);
+      // }).on('close', () => {
+      //   console.log(`File [${name}] done`);
+      // });
     });
     
     bb.on('field', (name, val, info) => {
@@ -75,13 +91,37 @@
     });
 
     bb.on('close', () => {
-      db.collection('posts').doc(fields.id).set({
-        id: fields.id,
-        caption: fields.caption,
-        location: fields.location,
-        date: parseInt(fields.date),
-        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/quasagram-46530.appspot.com/o/5tUZBEy.jpeg?alt=media&token=60d6d232-63b5-4b79-8aff-2f4e9b6e6ef6',
-      })
+
+      bucket.upload(
+        fileData.filepath,
+        {
+          uploadType: 'media',
+          metadata: {
+            metadata: {
+              contentType: fileData.mimeType,
+              firebaseStorageDownloadTokens: uuid
+            }
+          }
+        },
+        (err, uploadedFile) => {
+          if (!err) {
+            createDocument(uploadedFile)
+          }
+        }
+      )
+
+      function createDocument(uploadedFile) {
+        db.collection('posts').doc(fields.id).set({
+          id: fields.id,
+          caption: fields.caption,
+          location: fields.location,
+          date: parseInt(fields.date),
+          imageUrl: `https://firebasestorage.googleapis.com/v0/b/${ bucket.name }/o/${ uploadedFile.name }?alt=media&token=${ uuid }`,
+        }).then(() => {
+          response.send('Post added: ' + fields.id)
+        })
+      }
+
 
       response.send('Done parsing form!')
     });

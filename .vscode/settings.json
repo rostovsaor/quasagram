@@ -1,4 +1,7 @@
 {
   
-  "vetur.experimental.templateInterpolationService": true
+  "vetur.experimental.templateInterpolationService": true,
+  "cSpell.words": [
+    "Firestore"
+  ]
 }
