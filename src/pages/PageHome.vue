@@ -45,10 +45,58 @@
         <template v-else-if="!loadingPosts && !posts.length">
           <h5 class="text-center text-grey">No posts yet</h5>
         </template>
+
+        <!-- Skeleton -->
         <template
           v-else
         >
-          <q-card flat bordered>
+          <q-card flat bordered class="q-mb-md">
+            <q-item>
+              <q-item-section avatar>
+                <q-skeleton type="QAvatar" animation="fade" size="40px"/>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton type="text" animation="fade" />
+                </q-item-label>
+                <q-item-label caption>
+                  <q-skeleton type="text" animation="fade" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-skeleton height="200px" square animation="fade" />
+
+            <q-card-section>
+              <q-skeleton type="text" class="text-subtitle2" animation="fade" />
+              <q-skeleton type="text" width="50%" class="text-subtitle2" animation="fade" />
+            </q-card-section>
+          </q-card>
+          <q-card flat bordered class="q-mb-md">
+            <q-item>
+              <q-item-section avatar>
+                <q-skeleton type="QAvatar" animation="fade" size="40px"/>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton type="text" animation="fade" />
+                </q-item-label>
+                <q-item-label caption>
+                  <q-skeleton type="text" animation="fade" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+
+            <q-skeleton height="200px" square animation="fade" />
+
+            <q-card-section>
+              <q-skeleton type="text" class="text-subtitle2" animation="fade" />
+              <q-skeleton type="text" width="50%" class="text-subtitle2" animation="fade" />
+            </q-card-section>
+          </q-card>
+          <q-card flat bordered class="q-mb-md">
             <q-item>
               <q-item-section avatar>
                 <q-skeleton type="QAvatar" animation="fade" size="40px"/>
@@ -72,6 +120,7 @@
             </q-card-section>
           </q-card>
         </template>
+        
       </div>
 
       <div class="col-4 large-screen-only">
@@ -109,7 +158,7 @@ export default {
   methods: {
     getPosts() {
       this.loadingPosts = true
-      this.$axios.get('http://localhost:3000/posts').then(response => {
+      this.$axios.get(`${ process.env.API }/posts`).then(response => {
         // console.log('response: ', response)
         this.posts = response.data
         this.loadingPosts = false
