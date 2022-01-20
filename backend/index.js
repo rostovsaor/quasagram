@@ -5,9 +5,7 @@
   const express = require('express')
   const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
   const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
-  
-
-  
+    
 /*
   config - express
 */
@@ -46,5 +44,5 @@
 /*
   listen
 */
-  // app.listen(3000)
+
   app.listen(process.env.PORT || 3000)

@@ -199,7 +199,7 @@ export default {
       this.locationLoading = false
     },
     locationError() {  
-       this.$q.dialog({
+      this.$q.dialog({
         title: 'Error',
         message: 'Could not find your location'
       })
