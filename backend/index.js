@@ -25,7 +25,7 @@
   const db = getFirestore();
 
 /*
-  endpoint
+  endpoint - posts
 */
 
   app.get('/posts', (request, response) => {
@@ -39,6 +39,16 @@
       });
       response.send(posts)
     })
+  })
+
+/*
+  endpoint - create Pst
+*/
+
+  app.get('/createPost', (request, response) => {
+    response.set('Access-Control-Allow-Origin', '*')
+
+    response.send('createPost')
   })
 
 /*
