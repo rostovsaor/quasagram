@@ -5,6 +5,8 @@
   const express = require('express')
   const { initializeApp, applicationDefault, cert } = require('firebase-admin/app');
   const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+  let inspect = require('util').inspect
+  let busboy = require('busboy');
     
 /*
   config - express
@@ -42,13 +44,38 @@
   })
 
 /*
-  endpoint - create Pst
+  endpoint - createPost
 */
 
-  app.get('/createPost', (request, response) => {
+  app.post('/createPost', (request, response) => {
     response.set('Access-Control-Allow-Origin', '*')
 
-    response.send('createPost')
+    const bb = busboy({ headers: request.headers });
+
+    bb.on('file', (name, file, info) => {
+      const { filename, encoding, mimeType } = info;
+      console.log(
+        `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
+        filename,
+        encoding,
+        mimeType
+      );
+      file.on('data', (data) => {
+        console.log(`File [${name}] got ${data.length} bytes`);
+      }).on('close', () => {
+        console.log(`File [${name}] done`);
+      });
+    });
+    bb.on('field', (name, val, info) => {
+      console.log(`Field [${name}]: value: %j`, val);
+    });
+    bb.on('close', () => {
+      console.log('Done parsing form!')
+      // response.writeHead(303, { Connection: 'close', Location: '/' });
+      // response.end();
+      response.send('Done parsing form!')
+    });
+    request.pipe(bb);
   })
 
 /*
