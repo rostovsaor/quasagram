@@ -52,6 +52,8 @@
 
     const bb = busboy({ headers: request.headers });
 
+    let fields = {}
+
     bb.on('file', (name, file, info) => {
       const { filename, encoding, mimeType } = info;
       console.log(
@@ -66,13 +68,21 @@
         console.log(`File [${name}] done`);
       });
     });
+    
     bb.on('field', (name, val, info) => {
-      console.log(`Field [${name}]: value: %j`, val);
+      // console.log(`Field [${name}]: value: %j`, val);
+      fields[name] = val
     });
+
     bb.on('close', () => {
-      console.log('Done parsing form!')
-      // response.writeHead(303, { Connection: 'close', Location: '/' });
-      // response.end();
+      db.collection('posts').doc(fields.id).set({
+        id: fields.id,
+        caption: fields.caption,
+        location: fields.location,
+        date: parseInt(fields.date),
+        imageUrl: 'https://firebasestorage.googleapis.com/v0/b/quasagram-46530.appspot.com/o/5tUZBEy.jpeg?alt=media&token=60d6d232-63b5-4b79-8aff-2f4e9b6e6ef6',
+      })
+
       response.send('Done parsing form!')
     });
     request.pipe(bb);
